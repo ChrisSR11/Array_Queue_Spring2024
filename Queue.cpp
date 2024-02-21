@@ -8,10 +8,9 @@ Queue<T>::Queue(int max)
 //       The array to hold the queue elements has been dynamically
 //       allocated.
 {
-    numItems = 0;
+
+    front = rear = numItems = 0;
     maxQue = max;
-    front = 0;
-    rear = maxQue - 1;
     items = new T[maxQue];
 }
 
@@ -21,39 +20,37 @@ Queue<T>::Queue()          // Default class constructor
 //       The array to hold the queue elements has been dynamically
 //       allocated.
 {
-    numItems = 0;
+
+    front = rear = numItems = 0;
     maxQue = 500;
-    front = 0;
-    rear = maxQue - 1;
     items = new T[maxQue];
 }
 
 template<class T>
 Queue<T>::~Queue()         // Class destructor
 {
-    delete[] items;
+    delete [] items;
 }
 
 template<class T>
 void Queue<T>::MakeEmpty()
 // Post: front and rear have been reset to the empty state.
 {
-    front = 0;
-    rear = maxQue - 1;
+    front = rear = numItems = 0;
 }
 
 template<class T>
 bool Queue<T>::IsEmpty() const
 // Returns true if the queue is empty; false otherwise.
 {
-    return false;
+    return numItems == 0;
 }
 
 template<class T>
 bool Queue<T>::IsFull() const
 // Returns true if the queue is full; false otherwise.
 {
-    return false;
+    return numItems == maxQue;
 }
 
 template<class T>
@@ -62,6 +59,12 @@ void Queue<T>::Enqueue(T newItem)
 //       otherwise a FullQueue exception is thrown.  
 {
 
+    if(IsFull())
+        throw FullQueue();
+
+    items[rear] = newItem;
+    numItems++;
+    rear = (rear + 1) % maxQue;
 }
 
 template<class T>
@@ -70,5 +73,11 @@ T Queue<T>::Dequeue()
 //       removed and a copy returned in item; 
 //       otherwise a EmptyQueue exception has been thrown.
 {
+    if(IsEmpty())
+        throw EmptyQueue();
 
+    T value = items[front];
+    numItems--;
+    front = (front + 1) % maxQue;
+    return value;
 }
